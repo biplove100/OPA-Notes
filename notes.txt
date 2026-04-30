@@ -12,3 +12,19 @@ curl -X PUT http://localhost:8181/v1/policies/auth \
 
 TEST OPA AFTER APP SETUP
 curl -X POST http://localhost:8181/v1/policies/auth/allow -H "Content-Type: applicatntent-Type: application/json" -d "{\"input\": {\"user\": {\"role\": "admin\"}}}"  
+
+
+SCRIPT for POSTMAN
+POST REQUEST
+http://localhost:8181/v1/data/auth/allow
+json
+{
+  "input": {
+    "user": {
+      "role": "admin",
+      "id": 1
+    },
+    "resource": "profile",
+    "action": "update"
+  }
+}
