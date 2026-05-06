@@ -1,0 +1,49 @@
+You are developing a small backend service for an internal tool. The organization requires that all code follows secure development practices and automated checks before integration.
+Design and implement a system that satisfies the following requirements:
+
+Requirements
+API with Authorization (OPA)
+Create a simple API with at least one protected route (/secure).
+Use Open Policy Agent (OPA) to control access.
+Only users with role "admin" should be granted access.
+All other users must receive an appropriate denial response.
+Secrets Management
+Store configuration values such as:
+Server port
+OPA endpoint URL
+Use environment variables (via .env file).
+Ensure sensitive data is not committed to the repository.
+Version Control (Git + GitHub)
+Initialize a Git repository and push your project to GitHub.
+Maintain proper commit history.
+Pre-Commit Security Check (Husky + Snyk)
+Use Husky to add a pre-commit hook.
+Integrate Snyk to scan for vulnerabilities.
+Commits should be blocked if security issues are detected.
+CI/CD Pipeline
+Configure a CI pipeline using GitHub Actions.
+The pipeline should:
+Install dependencies
+Run a Snyk security scan
+The pipeline must trigger automatically on code push.
+
+Expected Outcome
+A working API with secure access control
+Proper handling of secrets using environment variables
+Automated security checks before commit
+A functioning CI pipeline validating the project
+
+Evaluation Criteria (25 Marks)
+Criteria	Marks
+OPA Integration	5
+Secrets Management	5
+Git & GitHub Usage	5
+Husky + Snyk Integration	5
+CI/CD Pipeline	5
+
+Submission
+GitHub repository link
+Screenshots showing:
+API authorization working
+Pre-commit hook execution
+CI pipeline run
