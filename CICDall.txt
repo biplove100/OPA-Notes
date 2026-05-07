@@ -1,0 +1,123 @@
+name: Secure DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  secure-build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # -----------------------------
+      # 1. Checkout Repository
+      # -----------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # -----------------------------
+      # 2. Setup Node.js
+      # -----------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # -----------------------------
+      # 3. Install Dependencies
+      # -----------------------------
+      - name: Install Dependencies
+        run: npm install
+
+      # -----------------------------
+      # 4. Run Application Tests
+      # -----------------------------
+      - name: Run Tests
+        run: npm test
+
+      # -----------------------------
+      # 5. Install OPA
+      # -----------------------------
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+
+      # -----------------------------
+      # 6. Validate OPA Policies
+      # -----------------------------
+      - name: Check OPA Policies
+        run: |
+          opa check policy.rego
+
+      # -----------------------------
+      # 7. Run OPA Policy Evaluation
+      # -----------------------------
+      - name: Evaluate OPA Policy
+        run: |
+          echo '{"input":{"user":"admin"}}' > input.json
+          opa eval --data policy.rego "data.auth.allow" --input input.json
+
+      # -----------------------------
+      # 8. Install Snyk
+      # -----------------------------
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      # -----------------------------
+      # 9. Authenticate Snyk
+      # -----------------------------
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      # -----------------------------
+      # 10. Run Snyk Security Scan
+      # -----------------------------
+      - name: Run Snyk Scan
+        run: snyk test
+
+      # -----------------------------
+      # 11. Build Docker Image
+      # -----------------------------
+      - name: Build Docker Image
+        run: |
+          docker build -t secure-node-app .
+
+      # -----------------------------
+      # 12. Scan Docker Image with Snyk
+      # -----------------------------
+      - name: Scan Docker Image
+        run: |
+          snyk container test secure-node-app
+
+      # -----------------------------
+      # 13. Login to Docker Hub
+      # -----------------------------
+      - name: Docker Login
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # -----------------------------
+      # 14. Tag Docker Image
+      # -----------------------------
+      - name: Tag Docker Image
+        run: |
+          docker tag secure-node-app ${{ secrets.DOCKER_USERNAME }}/secure-node-app:latest
+
+      # -----------------------------
+      # 15. Push Docker Image
+      # -----------------------------
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/secure-node-app:latest
+
+      # -----------------------------
+      # 16. Deployment Step
+      # -----------------------------
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          echo "Application deployed successfully!"
