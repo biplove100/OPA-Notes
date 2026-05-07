@@ -1,0 +1,96 @@
+Your organization wants to automate infrastructure validation and secure deployment checks before releasing applications to production.
+
+Design a DevOps workflow that validates infrastructure policies, scans containers for vulnerabilities, and automates deployment verification.
+
+Problem Statement
+
+You are part of a DevOps team responsible for deploying a containerized web service.
+Before deployment, the company requires:
+
+Infrastructure policy validation using OPA
+Secure container image creation using Docker
+Dependency and container scanning using Snyk
+Automated CI/CD checks using GitHub Actions
+Secure Git workflow using Husky
+
+Build and configure the complete workflow.
+
+Requirements
+1. Create a Simple Web Service
+Create a basic Node.js or Express.js application.
+Add:
+/health route
+/status route returning JSON response
+2. Infrastructure Policy Validation (OPA)
+
+Create a deployment configuration file (deployment.json or similar) containing:
+
+Application name
+CPU limit
+Memory limit
+Environment name
+
+Example:
+
+{
+  "app": "inventory-service",
+  "cpu": "500m",
+  "memory": "512Mi",
+  "environment": "production"
+}
+
+Use Open Policy Agent to enforce policies such as:
+
+Production deployments must have memory ≥ 512Mi
+CPU limit must be defined
+Environment cannot be empty
+
+3. Git & GitHub Workflow
+Initialize a Git repository
+Push code to GitHub
+Use meaningful commits
+
+4. Dockerization
+Create a Dockerfile
+Build the container image
+Run the application inside Docker
+
+5. Snyk Security Checks
+
+Use Snyk to:
+
+Scan project dependencies
+Scan Docker image vulnerabilities
+
+6. Husky Git Hook
+
+Use Husky to:
+
+Run Snyk scan before commit
+Prevent insecure commits
+
+7. CI/CD Pipeline
+
+Create a GitHub Actions workflow that automatically:
+
+Installs dependencies
+Validates OPA policies
+Runs Snyk scans
+Builds Docker image
+
+The workflow should execute on every push to the main branch.
+
+Deliverables
+
+Students must submit:
+
+GitHub repository link
+OPA policy file
+Deployment configuration file
+Dockerfile
+GitHub Actions workflow
+Screenshots of:
+OPA policy validation
+Docker container execution
+Snyk scan results
+Successful pipeline execution
